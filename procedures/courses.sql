@@ -4,12 +4,14 @@ LANGUAGE "plpgsql"
 AS $$
 BEGIN
     -- Check negative values
-    IF "min_deg" < 0 THEN
+    IF "min_deg" < 0 
+    THEN
         RAISE EXCEPTION "min_degree can not be negative";
     END IF;
 
     -- Check if max_degree less than min_degree
-    IF "max_deg" <= "min_deg" THEN
+    IF "max_deg" <= "min_deg"
+    THEN
         RAISE EXCEPTION "max_degree must be greated that min_degree";
     END IF;
 
@@ -23,8 +25,29 @@ CREATE PROCEDURE "update_course" ("c_id" INT, "c_name" TEXT, "min_deg" INT, "max
 LANGUAGE "plpgsql"
 AS $$
 BEGIN
+    -- Check if old value does not exist
+    IF NOT EXISTS (
+        SELECT 1 FROM "course"
+        WHERE "course_id" = c_id
+    ) THEN
+        RAISE EXCEPTION "course does not exist";
+    END IF;
+
+    -- Check negative values
+    IF "min_deg" < 0
+    THEN
+        RAISE EXCEPTION "min_degree can no be negative";
+    END IF;
+
+    -- Check if max_degree less than min_degree
+    IF "max_deg" <= "min_deg"
+    THEN
+        RAISE EXCEPTION "max_degree must be greater than min_dergee";
+    END IF;
+
     UPDATE "course"
-    SET "course_name" = c_name,
+    SET 
+        "course_name" = c_name,
         "min_degree" = min_deg,
         "max_degree" = max_deg
     WHERE "course_id" = c_id;
