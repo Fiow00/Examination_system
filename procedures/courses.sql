@@ -3,6 +3,16 @@ CREATE PROCEDURE "add_course" ("c_name" TEXT, "min_deg" INT, "max_deg" INT)
 LANGUAGE "plpgsql"
 AS $$
 BEGIN
+    -- Check negative values
+    IF "min_deg" < 0 THEN
+        RAISE EXCEPTION "min_degree can not be negative";
+    END IF;
+
+    -- Check if max_degree less than min_degree
+    IF "max_deg" <= "min_deg" THEN
+        RAISE EXCEPTION "max_degree must be greated that min_degree";
+    END IF;
+
     INSERT INTO "course" ("course_name", "min_degree", "max_degree")
     VALUES (c_name, min_deg, max_deg);
 END;
