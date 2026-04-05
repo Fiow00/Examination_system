@@ -72,7 +72,7 @@ END;
 $$;
 
 -- Select course by track --
-CREATE FUNCTION "get_by_track" ("t_id" INT)
+CREATE FUNCTION "get_course_by_track" ("t_id" INT)
 RETURNS TABLE (
     "course_id" INT,
     "course_name" TEXT,
@@ -89,10 +89,7 @@ BEGIN
         c."min_degree",
         c."max_degree"
     FROM "course" AS c
-    WHERE c."course_id" IN (
-        SELECT tc."course_id"
-        FROM "track_course" AS tc
-        WHERE tc."track_id" = t_id
-    );
+    JOIN "track_course" AS tc ON c."course_id" = tc."course_id"
+    WHERE tc."track_id" = t_id;
 END;
 $$;
