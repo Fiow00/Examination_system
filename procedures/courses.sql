@@ -59,6 +59,13 @@ CREATE PROCEDURE "delete_course" ("c_name" TEXT)
 LANGUAGE "plpgsql"
 AS $$
 BEGIN
+    -- Check if old values does not exist
+    IF NOT EXISTS (
+        SELECT 1 FROM "course" WHERE "course_id" = c_id
+    ) THEN
+        RAISE EXCEPTION "Course does not exist"
+    END IF;
+
     DELETE FROM "course"
     WHERE "course"."course_name" = c_name;
 END;
