@@ -19,9 +19,13 @@ CREATE TABLE "track" (
 -- Course --
 CREATE TABLE "course" (
     "course_id" SERIAL,
-    "course_name" TEXT NOT NULL,
+    "course_name" TEXT NOT NULL CHECK(
+        TRIM("course_name") <> '' AND 
+        "course_name" ~ '^[a-zA-Z0-9 ]+$'
+        AND "course_name" ~ '[a-zA-Z]'
+    ),
     "min_degree" INT NOT NULL CHECK ("min_degree" >= 0),
-    "max_degree" INT NOT NULL CHECK ("max_degree" > "min_degree"),
+    "max_degree" INT NOT NULL CHECK ("max_degree" > "min_degree" AND "max_degree" <= 100),
     PRIMARY KEY ("course_id")
 );
 
