@@ -76,8 +76,8 @@ BEGIN
     END IF;
 
     -- Check reasonable max
-    IF "max_deg" > 100 THEN
-        RAISE EXCEPTION "Max_degree cannot exceed 100 (got: %)", max_deg;
+    IF max_deg > 100 THEN
+        RAISE EXCEPTION 'Max_degree cannot exceed 100 (got: %)', max_deg;
     END IF;
 
     -- Check if empty
@@ -124,15 +124,46 @@ CREATE PROCEDURE "delete_course" (id INT)
 LANGUAGE "plpgsql"
 AS $$
 BEGIN
-    -- Check if old values does not exist
+    -- Check if course exists
     IF NOT EXISTS (
-        SELECT 1 FROM "course" WHERE "course_id" = id
+        SELECT 1 FROM "course" 
+        WHERE "course_id" = id
     ) THEN
-        RAISE EXCEPTION 'Course does not exist';
+        RAISE EXCEPTION 'Course with ID % does not exist', id;
+    END IF;
+
+    -- Check if course is used in track_course
+    IF EXISTS (
+        SELECT 1 FROM "track_course"
+        WHERE "course_id" = id
+    ) THEN
+        RAISE EXCEPTION 'Cannot delete course: it is assigned to a track';
+    END IF;
+
+    -- Check if course has questions
+    IF EXISTS (
+        SELECT 1 FROM "question"
+        WHERE "course_id" = id
+    ) THEN
+        RAISE EXCEPTION 'Cannot delete course: it has related questions';
+    END IF;
+
+    -- Check if course has exams
+    IF EXISTS (
+        SELECT 1 FROM "exam"
+        WHERE "course_id" = id
+    ) THEN
+        RAISE EXCEPTION 'Cannot delete course: it has related exams';
     END IF;
 
     DELETE FROM "course"
     WHERE "course_id" = id;
+
+    RAISE NOTICE 'Course with ID % deleted successfullly', id;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE;
 END;
 $$;
 
