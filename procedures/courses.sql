@@ -3,46 +3,20 @@ CREATE OR REPLACE PROCEDURE "add_course" (name TEXT, min_deg INT, max_deg INT)
 LANGUAGE "plpgsql"
 AS $$
 BEGIN
-    -- Check negative values
-    IF min_deg < 0 
-    THEN
-        RAISE EXCEPTION 'Min_degree can not be negative (got: %)', min_deg;
-    END IF;
-
-    -- Check max degree > min degree
-    IF max_deg <= min_deg
-    THEN
-        RAISE EXCEPTION 'Max_degree (%) must be greater than min_degree (%)', max_deg, min_deg;
-    END IF;
-
-    -- Check reasonable max
-    IF max_deg > 100
-    THEN
-        RAISE EXCEPTION 'Max_degree cannot exceed 100 (got: %)' max_deg;
-    END IF;
-
-    -- Check if empty
-    IF TRIM(name) = ''
-    THEN
-        RAISE EXCEPTION 'Course name can not be empty';
-    END IF;
-
-    -- Check allowed characters (letters, numbers, spaces)
-    IF TRIM(name) !~ '^[a-zA-Z0-9 ]+$'
-    THEN
-        RAISE EXCEPTION 'Course name contains invalid characters (only, letters, numbers, spaces)';
-    END IF;
-
-    -- Check at least one letter
-    IF TRIM(name) !~ '[a-zA-Z]'
-    THEN
-        RAISE EXCEPTION 'Course name must contain at least one letter';
-    END IF;
-
     INSERT INTO "course" ("course_name", "min_degree", "max_degree")
     VALUES (LOWER(TRIM(name)), min_deg, max_deg);
 
     RAISE NOTICE 'Course "%" added successfully (min=%, max=%)', name, min_deg, max_deg;
+
+EXCEPTION
+    WHEN unique_violation THEN
+        RAISE EXCEPTION 'Course "%" already exists', name;
+
+    WHEN check_violation THEN
+        RAISE EXCEPTION 'Invalid course data (check name or degrees)';
+
+    WHEN OTHERS THEN
+        RAISE;
 END;
 $$;
 
@@ -51,32 +25,26 @@ CREATE PROCEDURE "update_course" (id INT, name TEXT, min_deg INT, max_deg INT)
 LANGUAGE "plpgsql"
 AS $$
 BEGIN
-    -- Check if old value does not exist
-    IF NOT EXISTS (
-        SELECT 1 FROM "course"
-        WHERE "course_id" = id
-    ) THEN
-        RAISE EXCEPTION 'course does not exist';
-    END IF;
-
-    -- Check negative values
-    IF min_deg < 0
-    THEN
-        RAISE EXCEPTION 'min_degree can no be negative';
-    END IF;
-
-    -- Check if max_degree less than min_degree
-    IF max_deg <= min_deg
-    THEN
-        RAISE EXCEPTION 'max_degree must be greater than min_dergee';
-    END IF;
-
     UPDATE "course"
     SET 
-        "course_name" = name,
+        "course_name" = LOWER(TRIM(name)),
         "min_degree" = min_deg,
         "max_degree" = max_deg
     WHERE "course_id" = id;
+
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Course with ID % does not exist', id;
+    END IF;
+
+    RAISE NOTICE 'Course "%" updated successfully (id=%)', name, id;
+
+EXCEPTION
+    WHEN unique_violation THEN
+        RAISE EXCEPTION 'Course "%" already exists', name;
+    WHEN check_violation THEN
+        RAISE EXCEPTION 'Invalid course data (check name or degrees)';
+    WHEN OTHERS THEN
+        RAISE;
 END;
 $$;
 
@@ -85,15 +53,46 @@ CREATE PROCEDURE "delete_course" (id INT)
 LANGUAGE "plpgsql"
 AS $$
 BEGIN
-    -- Check if old values does not exist
+    -- Check if course exists
     IF NOT EXISTS (
-        SELECT 1 FROM "course" WHERE "course_id" = id
+        SELECT 1 FROM "course" 
+        WHERE "course_id" = id
     ) THEN
-        RAISE EXCEPTION 'Course does not exist';
+        RAISE EXCEPTION 'Course with ID % does not exist', id;
+    END IF;
+
+    -- Check if course is used in track_course
+    IF EXISTS (
+        SELECT 1 FROM "track_course"
+        WHERE "course_id" = id
+    ) THEN
+        RAISE EXCEPTION 'Cannot delete course: it is assigned to a track';
+    END IF;
+
+    -- Check if course has questions
+    IF EXISTS (
+        SELECT 1 FROM "question"
+        WHERE "course_id" = id
+    ) THEN
+        RAISE EXCEPTION 'Cannot delete course: it has related questions';
+    END IF;
+
+    -- Check if course has exams
+    IF EXISTS (
+        SELECT 1 FROM "exam"
+        WHERE "course_id" = id
+    ) THEN
+        RAISE EXCEPTION 'Cannot delete course: it has related exams';
     END IF;
 
     DELETE FROM "course"
     WHERE "course_id" = id;
+
+    RAISE NOTICE 'Course with ID % deleted successfullly', id;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE;
 END;
 $$;
 
