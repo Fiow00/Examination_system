@@ -1,5 +1,6 @@
 -- Success Tests
 CALL "add_course"('Database Design', 40, 100);
+
 CALL "add_course"('Programming 101', 30, 95);
 
 -- Failed Tests
