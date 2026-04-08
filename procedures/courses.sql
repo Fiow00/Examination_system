@@ -57,7 +57,7 @@ CREATE PROCEDURE "update_course" (id INT, name TEXT, min_deg INT, max_deg INT)
 LANGUAGE "plpgsql"
 AS $$
 BEGIN
-    -- Check if old value does not exist
+    -- Check if course exists
     IF NOT EXISTS (
         SELECT 1 FROM "course"
         WHERE "course_id" = id
@@ -66,23 +66,56 @@ BEGIN
     END IF;
 
     -- Check negative values
-    IF min_deg < 0
-    THEN
-        RAISE EXCEPTION 'min_degree can no be negative';
+    IF min_deg < 0 THEN
+        RAISE EXCEPTION 'Min_degree can not be negative (got: %)', min_deg;
     END IF;
 
-    -- Check if max_degree less than min_degree
-    IF max_deg <= min_deg
-    THEN
-        RAISE EXCEPTION 'max_degree must be greater than min_dergee';
+    -- Check if max_degree >  min_degree
+    IF max_deg <= min_deg THEN
+        RAISE EXCEPTION 'Max_degree (%) must be greater than min_degree (%)', max_deg, min_deg;
+    END IF;
+
+    -- Check reasonable max
+    IF "max_deg" > 100 THEN
+        RAISE EXCEPTION "Max_degree cannot exceed 100 (got: %)", max_deg;
+    END IF;
+
+    -- Check if empty
+    IF TRIM(name) = '' THEN
+        RAISE EXCEPTION 'Course name can not be empty';
+    END IF;
+
+    -- Check allowed characters
+    IF TRIM(name) !~ '^[a-zA-Z0-9 ]+$' THEN
+        RAISE EXCEPTION 'Course name contains invalid characters (only, letters, numbers, spaces)';
+    END IF;
+
+    -- Check at least one letter
+    IF TRIM(name) !~ '[a-zA-Z]' THEN
+        RAISE EXCEPTION 'Course name must contain at least one letter';
+    END IF;
+
+    -- Check duplicate
+    IF EXISTS (
+        SELECT 1 FROM "course"
+        WHERE LOWER("course_name") = LOWER(TRIM(name))
+        AND "course_id" != id
+    ) THEN
+        RAISE EXCEPTION 'Course "%" already exists', name;
     END IF;
 
     UPDATE "course"
     SET 
-        "course_name" = name,
+        "course_name" = LOWER(TRIM(name)),
         "min_degree" = min_deg,
         "max_degree" = max_deg
     WHERE "course_id" = id;
+
+    RAISE NOTICE 'Course "%" updated successfully (id=%)', name, id;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE;
 END;
 $$;
 
