@@ -1,13 +1,9 @@
--- Department --
-INSERT INTO "department" ("department_name", "location") 
-VALUES
+INSERT INTO "department" ("department_name", "location") VALUES
 ('Open Source', 'Cairo'),
 ('Artificial Intelligence', 'Alexandria'),
 ('Web Development', 'Giza');
 
--- Track --
-INSERT INTO "track" ("track_name", "department_id") 
-VALUES
+INSERT INTO "track" ("track_name", "department_id") VALUES
 ('Python Track', 1),
 ('Django Track', 1),
 ('Machine Learning Track', 2),
@@ -15,18 +11,14 @@ VALUES
 ('Frontend Track', 3),
 ('Backend Track', 3);
 
--- Course --
-INSERT INTO "course" ("course_name", "min_degree", "max_degree") 
-VALUES
+INSERT INTO "course" ("course_name", "min_degree", "max_degree") VALUES
 ('python basics', 0, 100),
 ('django fundamentals', 0, 100),
 ('machine learning intro', 0, 100),
 ('statistics basics', 0, 100),
 ('html css', 0, 100);
 
--- Track_Course --
-INSERT INTO "track_course" ("track_id", "course_id") 
-VALUES
+INSERT INTO "track_course" ("track_id", "course_id") VALUES
 (1,1),
 (2,2),
 (3,3),
@@ -35,81 +27,350 @@ VALUES
 (6,2),
 (1,2);
 
--- Instrucotr --
-INSERT INTO "instructor" ("name", "email", "department_id") 
-VALUES
+INSERT INTO "instructor" ("name", "email", "department_id") VALUES
 ('Ahmed Ali', 'ahmed@iti.com', 1),
 ('Sara Mohamed', 'sara@iti.com', 2),
 ('Omar Khaled', 'omar@iti.com', 3);
 
--- instructor_course --
-INSERT INTO "instructor_course" ("instructor_id", "course_id") 
-VALUES
+INSERT INTO "instructor_course" ("instructor_id", "course_id") VALUES
 (1,1),
 (1,2),
 (2,3),
 (2,4),
 (3,5);
 
--- Student --
-INSERT INTO "student" ("name", "email", "phone") 
-VALUES
-('Ali Hassan', 'ali@mail.com', '0100000000'),
-('Mona Adel', 'mona@mail.com', '0100000001'),
-('Youssef Samy', 'youssef@mail.com', '0100000002'),
-('Nour Ahmed', 'nour@mail.com', '0100000003'),
-('Hassan Mostafa', 'hassan@mail.com', '0100000004');
+INSERT INTO "student" ("name", "email", "phone") VALUES
+('Ali Hassan','ali@mail.com','0100000000'),
+('Mona Adel','mona@mail.com','0100000001'),
+('Youssef Samy','youssef@mail.com','0100000002'),
+('Nour Ahmed','nour@mail.com','0100000003'),
+('Hassan Mostafa','hassan@mail.com','0100000004'),
+('Karim Adel','karim@mail.com','0100000005'),
+('Salma Nabil','salma@mail.com','0100000006'),
+('Mostafa Tarek','mostafa@mail.com','0100000007'),
+('Huda Samir','huda@mail.com','0100000008'),
+('Amr Essam','amr@mail.com','0100000009'),
+('Laila Hassan','laila@mail.com','0100000010'),
+('Ibrahim Fathy','ibrahim@mail.com','0100000011'),
+('Dina Wael','dina@mail.com','0100000012'),
+('Mahmoud Atef','mahmoud@mail.com','0100000013'),
+('Rania Khaled','rania@mail.com','0100000014'),
+('Tamer Youssef','tamer@mail.com','0100000015'),
+('Nada Ali','nada@mail.com','0100000016'),
+('Khaled Samy','khaled@mail.com','0100000017'),
+('Farah Ahmed','farah@mail.com','0100000018'),
+('Omar Fathy','omar2@mail.com','0100000019');
 
--- Student_Track --
-INSERT INTO "student_track" ("student_id", "track_id") 
-VALUES
+INSERT INTO "student_track" ("student_id","track_id") VALUES
 (1,1),
 (2,2),
 (3,3),
 (4,4),
-(5,5);
+(5,5),
+(6,1),
+(7,1),
+(8,2),
+(9,2),
+(10,3),
+(11,3),
+(12,4),
+(13,4),
+(14,5),
+(15,6),
+(16,1),
+(17,2),
+(18,3),
+(19,4),
+(20,5);
 
--- Question --
-INSERT INTO "question" ("course_id", "question_body", "type", "points") 
-VALUES
-(1, 'Python is an interpreted language?', 'TF', 5),
-(1, 'Which of the following is a Python list?', 'MCQ', 5),
-(2, 'Django is a web framework?', 'TF', 5),
-(2, 'Which is a valid Django model field?', 'MCQ', 5),
-(3, 'Machine learning requires data?', 'TF', 5);
+INSERT INTO "question" ("course_id","question_body","type","points") VALUES
+(1,'Python is interpreted?','TF',5),
+(1,'Python uses indentation?','TF',5),
+(1,'Lists are immutable?','TF',5),
+(1,'Tuples are immutable?','TF',5),
+(1,'Python supports OOP?','TF',5),
+(2,'Django is a framework?','TF',5),
+(2,'Django uses ORM?','TF',5),
+(2,'Templates handle UI?','TF',5),
+(2,'Django uses MTV?','TF',5),
+(3,'ML uses data?','TF',5),
+(3,'Overfitting is bad?','TF',5),
+(3,'Supervised uses labels?','TF',5),
+(3,'Unsupervised uses labels?','TF',5),
+(4,'Mean is average?','TF',5),
+(4,'Median is center?','TF',5),
+(4,'Mode is most frequent?','TF',5),
+(5,'HTML is programming language?','TF',5),
+(5,'CSS styles pages?','TF',5),
+(5,'JS is required for HTML?','TF',5),
+(5,'CSS stands for cascading style sheets?','TF',5),
 
--- Choice --
-INSERT INTO "choice" ("question_id", "choice_body", "choice_order") VALUES
--- Q1
-(1, 'True', 1),
-(1, 'False', 2),
+(1,'Mutable type?','MCQ',5),
+(1,'Define function?','MCQ',5),
+(1,'Ordered type?','MCQ',5),
+(1,'Loop keyword?','MCQ',5),
+(1,'Dictionary symbol?','MCQ',5),
+(2,'Run server command?','MCQ',5),
+(2,'URL file?','MCQ',5),
+(2,'Template engine?','MCQ',5),
+(2,'Model file?','MCQ',5),
+(2,'Admin file?','MCQ',5),
+(3,'ML algorithm?','MCQ',5),
+(3,'Library?','MCQ',5),
+(3,'Regression example?','MCQ',5),
+(3,'Classification example?','MCQ',5),
+(3,'Clustering example?','MCQ',5),
+(4,'Spread measure?','MCQ',5),
+(4,'Probability range?','MCQ',5),
+(4,'Statistic example?','MCQ',5),
+(4,'Variance meaning?','MCQ',5),
+(4,'Standard deviation?','MCQ',5),
+(5,'HTML tag?','MCQ',5),
+(5,'CSS property?','MCQ',5),
+(5,'JS keyword?','MCQ',5),
+(5,'HTML attribute?','MCQ',5),
+(5,'CSS unit?','MCQ',5);
 
--- Q2
-(2, 'List using []', 1),
-(2, 'Dictionary using {}', 2),
-(2, 'Tuple using ()', 3),
-(2, 'Invalid syntax', 4),
+INSERT INTO "choice" ("question_id","choice_body","choice_order") VALUES
+(1,'True',1),
+(1,'False',2),
+(2,'True',1),
+(2,'False',2),
+(3,'True',1),
+(3,'False',2),
+(4,'True',1),
+(4,'False',2),
+(5,'True',1),
+(5,'False',2),
+(6,'True',1),
+(6,'False',2),
+(7,'True',1),
+(7,'False',2),
+(8,'True',1),
+(8,'False',2),
+(9,'True',1),
+(9,'False',2),
+(10,'True',1),
+(10,'False',2),
+(11,'True',1),
+(11,'False',2),
+(12,'True',1),
+(12,'False',2),
+(13,'True',1),
+(13,'False',2),
+(14,'True',1),
+(14,'False',2),
+(15,'True',1),
+(15,'False',2),
+(16,'True',1),
+(16,'False',2),
+(17,'True',1),
+(17,'False',2),
+(18,'True',1),
+(18,'False',2),
+(19,'True',1),
+(19,'False',2),
+(20,'True',1),
+(20,'False',2),
 
--- Q3
-(3, 'True', 1),
-(3, 'False', 2),
+(21,'List',1),
+(21,'Tuple',2),
+(21,'String',3),
+(21,'Int',4),
+(22,'def',1),
+(22,'func',2),
+(22,'function',3),
+(22,'define',4),
+(23,'List',1),
+(23,'Set',2),
+(23,'Dict',3),
+(23,'All',4),
+(24,'for',1),
+(24,'loop',2),
+(24,'iterate',3),
+(24,'repeat',4),
+(25,'{}',1),
+(25,'[]',2),
+(25,'()',3),
+(25,'<>',4),
 
--- Q4
-(4, 'CharField', 1),
-(4, 'IntegerField', 2),
-(4, 'InvalidField', 3),
-(4, 'None', 4),
+(26,'runserver',1),
+(26,'start',2),
+(26,'serve',3),
+(26,'go',4),
+(27,'urls.py',1),
+(27,'views.py',2),
+(27,'models.py',3),
+(27,'apps.py',4),
+(28,'Django',1),
+(28,'React',2),
+(28,'Angular',3),
+(28,'Vue',4),
+(29,'models.py',1),
+(29,'views.py',2),
+(29,'urls.py',3),
+(29,'apps.py',4),
+(30,'admin.py',1),
+(30,'views.py',2),
+(30,'urls.py',3),
+(30,'models.py',4),
 
--- Q5
-(5, 'True', 1),
-(5, 'False', 2);
+(31,'Decision Tree',1),
+(31,'HTML',2),
+(31,'CSS',3),
+(31,'SQL',4),
+(32,'Scikit-learn',1),
+(32,'Bootstrap',2),
+(32,'jQuery',3),
+(32,'Laravel',4),
+(33,'Linear Regression',1),
+(33,'HTML',2),
+(33,'CSS',3),
+(33,'API',4),
+(34,'Classification',1),
+(34,'Styling',2),
+(34,'Design',3),
+(34,'Markup',4),
+(35,'KMeans',1),
+(35,'HTML',2),
+(35,'CSS',3),
+(35,'JS',4),
 
--- ModelAnswer -- 
-INSERT INTO "model_answer" ("question_id", "correct_choice_id") 
-VALUES
-(1, 1),
-(2, 1),
-(3, 1),
-(4, 1),
-(5, 1);
+(36,'Variance',1),
+(36,'Mean',2),
+(36,'Sum',3),
+(36,'Count',4),
+(37,'0-1',1),
+(37,'1-10',2),
+(37,'0-100',3),
+(37,'-1-1',4),
+(38,'Mean',1),
+(38,'HTML',2),
+(38,'CSS',3),
+(38,'JS',4),
+(39,'Spread',1),
+(39,'Center',2),
+(39,'Count',3),
+(39,'Value',4),
+(40,'Deviation',1),
+(40,'Sum',2),
+(40,'Avg',3),
+(40,'Mode',4),
 
+(41,'<div>',1),
+(41,'class',2),
+(41,'id',3),
+(41,'style',4),
+(42,'color',1),
+(42,'print',2),
+(42,'echo',3),
+(42,'return',4),
+(43,'var',1),
+(43,'div',2),
+(43,'class',3),
+(43,'id',4),
+(44,'href',1),
+(44,'for',2),
+(44,'while',3),
+(44,'if',4),
+(45,'px',1),
+(45,'kg',2),
+(45,'sec',3),
+(45,'m',4);
+
+INSERT INTO "model_answer" ("question_id","correct_choice_id") VALUES
+(1,1),
+(2,1),
+(3,2),
+(4,1),
+(5,1),
+(6,1),
+(7,1),
+(8,1),
+(9,1),
+(10,1),
+(11,1),
+(12,1),
+(13,2),
+(14,1),
+(15,1),
+(16,1),
+(17,2),
+(18,1),
+(19,2),
+(20,1),
+(21,1),
+(22,1),
+(23,4),
+(24,1),
+(25,1),
+(26,1),
+(27,1),
+(28,1),
+(29,1),
+(30,1),
+(31,1),
+(32,1),
+(33,1),
+(34,1),
+(35,1),
+(36,1),
+(37,1),
+(38,1),
+(39,1),
+(40,1),
+(41,1),
+(42,1),
+(43,1),
+(44,1),
+(45,1);
+
+INSERT INTO "exam" ("name","course_id","total_questions") VALUES
+('Python Exam A',1,5),
+('Django Exam A',2,5),
+('ML Exam A',3,5);
+
+INSERT INTO "exam_question" ("exam_id","question_id","order_number") VALUES
+(1,1,1),
+(1,2,2),
+(1,21,3),
+(1,22,4),
+(1,23,5),
+(2,6,1),
+(2,7,2),
+(2,26,3),
+(2,27,4),
+(2,28,5),
+(3,10,1),
+(3,11,2),
+(3,31,3),
+(3,32,4),
+(3,33,5);
+
+INSERT INTO "student_exam" ("student_id","exam_id","start_time","end_time") VALUES
+(1,1,NOW(),NOW()),
+(2,1,NOW(),NOW()),
+(3,2,NOW(),NOW()),
+(4,3,NOW(),NOW());
+
+INSERT INTO "student_answer" ("student_exam_id","question_id","chosen_choice_id") VALUES
+(1,1,1),
+(1,2,1),
+(1,21,1),
+(1,22,1),
+(1,23,4),
+(2,1,2),
+(2,2,1),
+(2,21,2),
+(2,22,3),
+(2,23,1),
+(3,6,1),
+(3,7,1),
+(3,26,1),
+(3,27,1),
+(3,28,1),
+(4,10,1),
+(4,11,2),
+(4,31,1),
+(4,32,1),
+(4,33,1);
