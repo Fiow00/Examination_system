@@ -114,7 +114,7 @@ CREATE TABLE "exam" (
     "total_questions" INT NOT NULL CHECK ("total_questions" BETWEEN 1 AND 100),
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY ("exam_id"),
-    FOREIGN KEY ("course_id") REFERENCES "course"("course_id") ON DELETE CASCADE
+    FOREIGN KEY ("course_id") REFERENCES "course"("course_id") ON DELETE CASCADE,
     UNIQUE ("name", "course_id")
 );
 
