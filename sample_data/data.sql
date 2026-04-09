@@ -2,33 +2,38 @@
 INSERT INTO "department" ("department_name", "location") 
 VALUES
 ('Open Source', 'Cairo'),
-('AI', 'Alex'),
-('Web', 'Giza');
+('Artificial Intelligence', 'Alexandria'),
+('Web Development', 'Giza');
 
 -- Track --
 INSERT INTO "track" ("track_name", "department_id") 
 VALUES
-('Python', 1),
-('Django', 1),
-('Machine Learning', 2),
-('Data Science', 2),
-('Frontend', 3),
-('Backend', 3);
+('Python Track', 1),
+('Django Track', 1),
+('Machine Learning Track', 2),
+('Data Science Track', 2),
+('Frontend Track', 3),
+('Backend Track', 3);
 
 -- Course --
 INSERT INTO "course" ("course_name", "min_degree", "max_degree") 
 VALUES
-('Python Basics', 0, 100),
-('Django', 0, 100),
-('ML Intro', 0, 100),
-('Statistics', 0, 100),
-('HTML/CSS', 0, 100);
+('python basics', 0, 100),
+('django fundamentals', 0, 100),
+('machine learning intro', 0, 100),
+('statistics basics', 0, 100),
+('html css', 0, 100);
 
 -- Track_Course --
 INSERT INTO "track_course" ("track_id", "course_id") 
 VALUES
-(1,1), (2,2), (3,3), (4,4), (5,5),
-(6,2), (1,2);
+(1,1),
+(2,2),
+(3,3),
+(4,4),
+(5,5),
+(6,2),
+(1,2);
 
 -- Instrucotr --
 INSERT INTO "instructor" ("name", "email", "department_id") 
@@ -40,18 +45,20 @@ VALUES
 -- instructor_course --
 INSERT INTO "instructor_course" ("instructor_id", "course_id") 
 VALUES
-(1,1), (1,2),
-(2,3), (2,4),
+(1,1),
+(1,2),
+(2,3),
+(2,4),
 (3,5);
 
 -- Student --
 INSERT INTO "student" ("name", "email", "phone") 
 VALUES
-('Ali', 'ali@mail.com', '0100'),
-('Mona', 'mona@mail.com', '0101'),
-('Youssef', 'youssef@mail.com', '0102'),
-('Nour', 'nour@mail.com', '0103'),
-('Hassan', 'hassan@mail.com', '0104');
+('Ali Hassan', 'ali@mail.com', '0100000000'),
+('Mona Adel', 'mona@mail.com', '0100000001'),
+('Youssef Samy', 'youssef@mail.com', '0100000002'),
+('Nour Ahmed', 'nour@mail.com', '0100000003'),
+('Hassan Mostafa', 'hassan@mail.com', '0100000004');
 
 -- Student_Track --
 INSERT INTO "student_track" ("student_id", "track_id") 
@@ -65,35 +72,35 @@ VALUES
 -- Question --
 INSERT INTO "question" ("course_id", "question_body", "type", "points") 
 VALUES
-(1, 'Python is interpreted?', 'TF', 5),
-(1, 'Which is a list?', 'MCQ', 5),
-(2, 'Django is a framework?', 'TF', 5),
-(2, 'Which is a model field?', 'MCQ', 5),
-(3, 'ML needs data?', 'TF', 5);
+(1, 'Python is an interpreted language?', 'TF', 5),
+(1, 'Which of the following is a Python list?', 'MCQ', 5),
+(2, 'Django is a web framework?', 'TF', 5),
+(2, 'Which is a valid Django model field?', 'MCQ', 5),
+(3, 'Machine learning requires data?', 'TF', 5);
 
 -- Choice --
 INSERT INTO "choice" ("question_id", "choice_body", "choice_order") VALUES
--- Q1 (TF)
+-- Q1
 (1, 'True', 1),
 (1, 'False', 2),
 
--- Q2 (MCQ)
-(2, '[]', 1),
-(2, '{}', 2),
-(2, '()', 3),
-(2, '<>', 4),
+-- Q2
+(2, 'List using []', 1),
+(2, 'Dictionary using {}', 2),
+(2, 'Tuple using ()', 3),
+(2, 'Invalid syntax', 4),
 
--- Q3 (TF)
+-- Q3
 (3, 'True', 1),
 (3, 'False', 2),
 
--- Q4 (MCQ)
+-- Q4
 (4, 'CharField', 1),
 (4, 'IntegerField', 2),
-(4, 'FakeField', 3),
+(4, 'InvalidField', 3),
 (4, 'None', 4),
 
--- Q5 (TF)
+-- Q5
 (5, 'True', 1),
 (5, 'False', 2);
 
