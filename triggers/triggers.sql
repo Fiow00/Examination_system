@@ -4,7 +4,7 @@ BEGIN
     IF NOT EXISTS (
         SELECT 1 FROM "choice"
         WHERE "choice_id" = NEW."correct_choice_id"
-        ADD "question_id" = NEW."question_id"
+        AND "question_id" = NEW."question_id"
     ) THEN
         RAISE EXCEPTION 'Correct choice must belong to the same question';
     END IF;
@@ -34,7 +34,7 @@ BEGIN
 END;
 $$ LANGUAGE "plpgsql";
 
-CREATE TRIGGER "check_student_answer"
+CREATE TRIGGER "check_student_answer_trigger"
 BEFORE INSERT OR UPDATE ON "student_answer"
 FOR EACH ROW
 EXECUTE FUNCTION "check_student_answer"();
