@@ -108,7 +108,7 @@ BEGIN
 
     IF EXISTS (
         SELECT 1 FROM "course"
-        WHERE LOWER("course_name") COLLATE "ar_AR.utf8" = LOWER(clean_name) COLLATE "ar_AR.utf8"
+        WHERE LOWER("course_name") = LOWER(clean_name)
         AND "course_id" <> id
     ) THEN
         RAISE EXCEPTION 'Course "%" already exists', clean_name;
