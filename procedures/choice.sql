@@ -1,58 +1,63 @@
 
 -- Insert Choice
 
-CREATE OR REPLACE PROCEDURE add_choice(q_id INT, c_body TEXT, c_order INT)
+CREATE OR REPLACE PROCEDURE add_choice(
+    question_id_input INT,
+    choice_body_input TEXT,
+    choice_order_input INT
+)
 LANGUAGE plpgsql
 AS $$
 DECLARE
-    q_type TEXT;
+    question_type TEXT;
     choice_count INT;
 BEGIN
 
-
-    IF c_body IS NULL OR TRIM(c_body) = '' THEN
+    IF choice_body_input IS NULL OR TRIM(choice_body_input) = '' THEN
         RAISE EXCEPTION 'Choice body cannot be empty';
     END IF;
 
-
-    IF c_order IS NULL OR c_order <= 0 THEN
+    IF choice_order_input IS NULL OR choice_order_input <= 0 THEN
         RAISE EXCEPTION 'Choice order must be positive';
     END IF;
 
-
-    IF NOT EXISTS (SELECT 1 FROM question WHERE question_id = q_id) THEN
+    IF NOT EXISTS (
+        SELECT 1 FROM question 
+        WHERE question_id = question_id_input
+    ) THEN
         RAISE EXCEPTION 'Question not found';
     END IF;
 
+    SELECT type INTO question_type 
+    FROM question 
+    WHERE question_id = question_id_input;
 
-    SELECT type INTO q_type FROM question WHERE question_id = q_id;
-
-
-    IF q_type = 'MCQ' AND (c_order < 1 OR c_order > 4) THEN
+    IF question_type = 'MCQ' AND (choice_order_input < 1 OR choice_order_input > 4) THEN
         RAISE EXCEPTION 'MCQ choices must be between 1 and 4';
-    ELSIF q_type = 'TF' AND (c_order < 1 OR c_order > 2) THEN
+    ELSIF question_type = 'TF' AND (choice_order_input < 1 OR choice_order_input > 2) THEN
         RAISE EXCEPTION 'TF choices must be between 1 and 2';
     END IF;
 
+    SELECT COUNT(*) INTO choice_count 
+    FROM choice 
+    WHERE question_id = question_id_input;
 
-    SELECT COUNT(*) INTO choice_count FROM choice WHERE question_id = q_id;
-
-    IF q_type = 'MCQ' AND choice_count >= 4 THEN
+    IF question_type = 'MCQ' AND choice_count >= 4 THEN
         RAISE EXCEPTION 'MCQ question cannot have more than 4 choices';
-    ELSIF q_type = 'TF' AND choice_count >= 2 THEN
+    ELSIF question_type = 'TF' AND choice_count >= 2 THEN
         RAISE EXCEPTION 'TF question cannot have more than 2 choices';
     END IF;
 
-
     IF EXISTS (
         SELECT 1 FROM choice 
-        WHERE question_id = q_id AND choice_order = c_order
+        WHERE question_id = question_id_input 
+        AND choice_order = choice_order_input
     ) THEN
         RAISE EXCEPTION 'Choice order already exists for this question';
     END IF;
 
     INSERT INTO choice (question_id, choice_body, choice_order)
-    VALUES (q_id, c_body, c_order);
+    VALUES (question_id_input, choice_body_input, choice_order_input);
 END;
 $$;
 
@@ -60,90 +65,104 @@ $$;
 -- ====================================================================================
 -- Update Choice
 
-CREATE OR REPLACE PROCEDURE update_choice(c_id INT, c_body TEXT, c_order INT)
+CREATE OR REPLACE PROCEDURE update_choice(
+    choice_id_input INT,
+    choice_body_input TEXT,
+    choice_order_input INT
+)
 LANGUAGE plpgsql
 AS $$
 DECLARE
-    q_id INT;
-    q_type TEXT;
+    question_id_value INT;
+    question_type TEXT;
 BEGIN
 
-
-    IF c_body IS NULL OR TRIM(c_body) = '' THEN
+    IF choice_body_input IS NULL OR TRIM(choice_body_input) = '' THEN
         RAISE EXCEPTION 'Choice body cannot be empty';
     END IF;
 
-
-    IF c_order IS NULL OR c_order <= 0 THEN
+    IF choice_order_input IS NULL OR choice_order_input <= 0 THEN
         RAISE EXCEPTION 'Choice order must be positive';
     END IF;
 
-
-    IF NOT EXISTS (SELECT 1 FROM choice WHERE choice_id = c_id) THEN
+    IF NOT EXISTS (
+        SELECT 1 FROM choice 
+        WHERE choice_id = choice_id_input
+    ) THEN
         RAISE EXCEPTION 'Choice not found';
     END IF;
 
+    SELECT question_id INTO question_id_value 
+    FROM choice 
+    WHERE choice_id = choice_id_input;
 
-    SELECT question_id INTO q_id FROM choice WHERE choice_id = c_id;
-    SELECT type INTO q_type FROM question WHERE question_id = q_id;
+    SELECT type INTO question_type 
+    FROM question 
+    WHERE question_id = question_id_value;
 
-
-    IF q_type = 'MCQ' AND (c_order < 1 OR c_order > 4) THEN
+    IF question_type = 'MCQ' AND (choice_order_input < 1 OR choice_order_input > 4) THEN
         RAISE EXCEPTION 'MCQ choices must be between 1 and 4';
-    ELSIF q_type = 'TF' AND (c_order < 1 OR c_order > 2) THEN
+    ELSIF question_type = 'TF' AND (choice_order_input < 1 OR choice_order_input > 2) THEN
         RAISE EXCEPTION 'TF choices must be between 1 and 2';
     END IF;
 
-
     IF EXISTS (
         SELECT 1 FROM choice 
-        WHERE question_id = q_id 
-        AND choice_order = c_order 
-        AND choice_id <> c_id
+        WHERE question_id = question_id_value 
+        AND choice_order = choice_order_input 
+        AND choice_id <> choice_id_input
     ) THEN
         RAISE EXCEPTION 'Choice order already exists for this question';
     END IF;
 
     UPDATE choice
-    SET choice_body = c_body,
-        choice_order = c_order
-    WHERE choice_id = c_id;
+    SET choice_body = choice_body_input,
+        choice_order = choice_order_input
+    WHERE choice_id = choice_id_input;
 END;
 $$;
 
 
--- ==================================================================================
+-- ========================================================================================
 -- Delete Choice
 
-CREATE OR REPLACE PROCEDURE delete_choice(c_id INT)
+CREATE OR REPLACE PROCEDURE delete_choice(
+    choice_id_input INT
+)
 LANGUAGE plpgsql
 AS $$
 DECLARE
-    q_id INT;
-    q_type TEXT;
+    question_id_value INT;
+    question_type TEXT;
     choice_count INT;
 BEGIN
 
-
-    IF NOT EXISTS (SELECT 1 FROM choice WHERE choice_id = c_id) THEN
+    IF NOT EXISTS (
+        SELECT 1 FROM choice 
+        WHERE choice_id = choice_id_input
+    ) THEN
         RAISE EXCEPTION 'Choice not found';
     END IF;
 
+    SELECT question_id INTO question_id_value 
+    FROM choice 
+    WHERE choice_id = choice_id_input;
 
-    SELECT question_id INTO q_id FROM choice WHERE choice_id = c_id;
-    SELECT type INTO q_type FROM question WHERE question_id = q_id;
+    SELECT type INTO question_type 
+    FROM question 
+    WHERE question_id = question_id_value;
 
+    SELECT COUNT(*) INTO choice_count 
+    FROM choice 
+    WHERE question_id = question_id_value;
 
-    SELECT COUNT(*) INTO choice_count FROM choice WHERE question_id = q_id;
-
-
-    IF q_type = 'MCQ' AND (choice_count - 1 < 4) THEN
+    IF question_type = 'MCQ' AND (choice_count - 1 < 4) THEN
         RAISE EXCEPTION 'MCQ must have at least 4 choices';
-    ELSIF q_type = 'TF' AND (choice_count - 1 < 2) THEN
+    ELSIF question_type = 'TF' AND (choice_count - 1 < 2) THEN
         RAISE EXCEPTION 'TF must have exactly 2 choices';
     END IF;
 
     DELETE FROM choice
-    WHERE choice_id = c_id;
+    WHERE choice_id = choice_id_input;
 END;
 $$;
