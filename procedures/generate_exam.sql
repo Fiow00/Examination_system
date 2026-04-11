@@ -67,7 +67,7 @@ BEGIN
 
     IF EXISTS (
         SELECT 1 FROM "exam"
-        WHERE LOWER("name") COLLATE "ar_AR.utf8" = LOWER(TRIM(exam_name)) COLLATE "ar_AR.utf8"
+        WHERE LOWER("name") = LOWER(TRIM(exam_name))
         AND "exam"."course_id" = course_id
     ) THEN
         RAISE EXCEPTION 'Exam "%" already exists for this course', exam_name;
