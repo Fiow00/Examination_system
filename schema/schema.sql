@@ -19,9 +19,12 @@ CREATE TABLE "track" (
 -- Course --
 CREATE TABLE "course" (
     "course_id" SERIAL,
-    "course_name" TEXT NOT NULL,
+    "course_name" TEXT NOT NULL UNIQUE CHECK(
+        LENGTH(TRIM("course_name")) >= 2
+        AND LENGTH("course_name") <= 100
+    ),
     "min_degree" INT NOT NULL CHECK ("min_degree" >= 0),
-    "max_degree" INT NOT NULL CHECK ("max_degree" > "min_degree"),
+    "max_degree" INT NOT NULL CHECK ("max_degree" > "min_degree" AND "max_degree" <= 100),
     PRIMARY KEY ("course_id")
 );
 
@@ -75,7 +78,7 @@ CREATE TABLE "student_track" (
 CREATE TABLE "question" (
     "question_id" SERIAL,
     "course_id" INT NOT NULL,
-    "question_body" TEXT NOT NULL,
+    "question_body" TEXT NOT NULL CHECK (TRIM("question_body") <> ''),
     "type" TEXT NOT NULL CHECK ("type" IN ('MCQ', 'TF')),
     "points" INT NOT NULL CHECK ("points" > 0),
     PRIMARY KEY ("question_id"),
@@ -87,7 +90,7 @@ CREATE TABLE "choice" (
     "choice_id" SERIAL,
     "question_id" INT NOT NULL,
     "choice_body" TEXT NOT NULL,
-    "choice_order" INT NOT NULL,
+    "choice_order" INT NOT NULL CHECK ("choice_order" > 0),
     PRIMARY KEY ("choice_id"),
     FOREIGN KEY ("question_id") REFERENCES "question"("question_id") ON DELETE CASCADE,
     UNIQUE ("question_id", "choice_order")
@@ -107,17 +110,18 @@ CREATE TABLE "exam" (
     "exam_id" SERIAL,
     "name" TEXT NOT NULL,
     "course_id" INT NOT NULL,
-    "total_questions" INT NOT NULL CHECK ("total_questions" > 0),
+    "total_questions" INT NOT NULL CHECK ("total_questions" BETWEEN 1 AND 100),
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY ("exam_id"),
-    FOREIGN KEY ("course_id") REFERENCES "course"("course_id") ON DELETE CASCADE
+    FOREIGN KEY ("course_id") REFERENCES "course"("course_id") ON DELETE CASCADE,
+    UNIQUE ("name", "course_id")
 );
 
 -- Exam_Question --
 CREATE TABLE "exam_question" (
     "exam_id" INT,
     "question_id" INT,
-    "order_number" INT NOT NULL,
+    "order_number" INT NOT NULL CHECK ("order_number" > 0),
     PRIMARY KEY ("exam_id", "question_id"),
     FOREIGN KEY ("exam_id") REFERENCES "exam"("exam_id") ON DELETE CASCADE,
     FOREIGN KEY ("question_id") REFERENCES "question"("question_id") ON DELETE CASCADE,
