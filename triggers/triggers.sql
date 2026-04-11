@@ -38,3 +38,38 @@ CREATE TRIGGER "check_student_answer_trigger"
 BEFORE INSERT OR UPDATE ON "student_answer"
 FOR EACH ROW
 EXECUTE FUNCTION "check_student_answer"();
+
+
+CREATE OR REPLACE FUNCTION "check_choices_count"()
+RETURNS TRIGGER AS $$
+DECLARE
+    count INT;
+    question_type TEXT;
+BEGIN
+    SELECT COUNT(*), "question"."type"
+    INTO count, question_type
+    FROM "choice"
+    JOIN "question" ON "question"."question_id" = "choice"."question_id"
+    WHERE "choice"."question_id" = NEW."question_id"
+    GROUP BY "question"."type";
+
+    IF count IS NULL THEN
+        count := 0;
+    END IF;
+
+    count := count + 1;
+
+    IF question_type = 'MCQ' AND count >= 4 THEN
+        RAISE EXCEPTION 'MCQ can not have more than 4 choices';
+    ELSIF question_type = 'TF' AND count >= 2 THEN
+        RAISE EXCEPTION 'TF cannot have more than 2 choices';
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE "plpgsql";
+
+CREATE TRIGGER "check_choices_count_trigger"
+BEFORE INSERT ON "choice"
+FOR EACH ROW
+EXECUTE FUNCTION "check_choices_count"();
