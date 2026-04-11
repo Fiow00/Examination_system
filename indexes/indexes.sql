@@ -57,7 +57,7 @@ CREATE UNIQUE INDEX "model_answer_question_index" ON "model_answer"("question_id
 CREATE INDEX "model_answer_choice_index" ON "model_answer"("correct_choice_id");
 
 -- UNIQUE indexes for critical fields (schema constraints + explicit indexes for documentation)
-CREATE UNIQUE INDEX "course_name_index" ON "course"(LOWER("course_name") COLLATE "ar_AR.utf8");
+CREATE UNIQUE INDEX "course_name_index" ON "course"(LOWER("course_name"));
 CREATE UNIQUE INDEX "instructor_email_index" ON "instructor"("email");
 CREATE UNIQUE INDEX "student_email_index" ON "student"("email");
 CREATE UNIQUE INDEX "department_name_index" ON "department"("department_name");
