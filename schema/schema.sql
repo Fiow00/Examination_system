@@ -19,10 +19,9 @@ CREATE TABLE "track" (
 -- Course --
 CREATE TABLE "course" (
     "course_id" SERIAL,
-    "course_name" TEXT NOT NULL CHECK(
-        TRIM("course_name") <> '' AND 
-        "course_name" ~ '^[a-zA-Z0-9 ]+$'
-        AND "course_name" ~ '[a-zA-Z]'
+    "course_name" TEXT NOT NULL COLLATE "ar_AR.utf8" UNIQUE CHECK(
+        LENGTH(TRIM("course_name")) >= 2
+        AND LENGTH("course_name") <= 100
     ),
     "min_degree" INT NOT NULL CHECK ("min_degree" >= 0),
     "max_degree" INT NOT NULL CHECK ("max_degree" > "min_degree" AND "max_degree" <= 100),
