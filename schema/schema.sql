@@ -19,7 +19,7 @@ CREATE TABLE "track" (
 -- Course --
 CREATE TABLE "course" (
     "course_id" SERIAL,
-    "course_name" TEXT NOT NULL CHECK(
+    "course_name" TEXT NOT NULL COLLATE "ar_AR.utf8" UNIQUE CHECK(
         LENGTH(TRIM("course_name")) >= 2
         AND LENGTH("course_name") <= 100
     ),
