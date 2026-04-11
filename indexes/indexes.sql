@@ -14,6 +14,10 @@ CREATE INDEX "exam_index" ON "exam"("course_id");
 
 CREATE INDEX "student_exam_index" ON "student_exam"("student_id", "exam_id");
 
-CREATE INDEX "student_answer_index" ON "student_answer"("student_exam_id");
+CREATE INDEX "exam_question_index" ON "exam_question"("exam_id", "question_id");
+
+CREATE INDEX "student_answer_index" ON "student_answer"("student_exam_id", "question_id");
+
+CREATE UNIQUE INDEX "model_answer_question_index" ON "model_answer"("question_id");
 
 CREATE UNIQUE INDEX "unique_course_name_index" ON "course"(LOWER("course_name"));
