@@ -1,6 +1,14 @@
 -- Insert Instructor
+<<<<<<< Updated upstream
 
 CREATE OR REPLACE PROCEDURE add_instructor(i_name TEXT, i_email TEXT, d_id INT)
+=======
+CREATE OR REPLACE PROCEDURE add_instructor(
+    instructor_name TEXT,
+    instructor_email TEXT,
+    dept_id INT
+)
+>>>>>>> Stashed changes
 LANGUAGE plpgsql
 AS $$
 BEGIN
@@ -8,12 +16,23 @@ BEGIN
         RAISE EXCEPTION 'Instructor email already exists';
     END IF;
 
+<<<<<<< Updated upstream
     IF d_id IS NOT NULL AND NOT EXISTS (SELECT 1 FROM department WHERE department_id = d_id) THEN
+=======
+    IF dept_id IS NOT NULL AND NOT EXISTS (
+        SELECT 1 FROM department 
+        WHERE department_id = dept_id
+    ) THEN
+>>>>>>> Stashed changes
         RAISE EXCEPTION 'Department not found';
     END IF;
 
     INSERT INTO instructor (name, email, department_id)
+<<<<<<< Updated upstream
     VALUES (i_name, i_email, d_id);
+=======
+    VALUES (instructor_name, instructor_email, dept_id);
+>>>>>>> Stashed changes
 END;
 $$;
 
