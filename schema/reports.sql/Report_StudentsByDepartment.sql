@@ -11,5 +11,3 @@ JOIN "student_track" st ON s."student_id" = st."student_id"
 JOIN "track" t ON st."track_id" = t."track_id"
 JOIN "department" d ON t."department_id" = d."department_id";
 
--- To run for a specific department (e.g., Dept ID 1):
--- SELECT * FROM "View_StudentsByDepartment" WHERE "department_id" = 1;
