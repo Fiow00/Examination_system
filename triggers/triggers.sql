@@ -59,9 +59,9 @@ BEGIN
 
     count := count + 1;
 
-    IF question_type = 'MCQ' AND count >= 4 THEN
+    IF question_type = 'MCQ' AND count > 4 THEN
         RAISE EXCEPTION 'MCQ can not have more than 4 choices';
-    ELSIF question_type = 'TF' AND count >= 2 THEN
+    ELSIF question_type = 'TF' AND count > 2 THEN
         RAISE EXCEPTION 'TF cannot have more than 2 choices';
     END IF;
 
@@ -70,6 +70,6 @@ END;
 $$ LANGUAGE "plpgsql";
 
 CREATE TRIGGER "check_choices_count_trigger"
-BEFORE INSERT ON "choice"
+BEFORE INSERT OR UPDATE ON "choice"
 FOR EACH ROW
 EXECUTE FUNCTION "check_choices_count"();
