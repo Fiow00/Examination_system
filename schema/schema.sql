@@ -1,11 +1,11 @@
 -- Department --
-CREATE TABLE "department" (
+ CREATE TABLE "department" (
     "department_id" SERIAL,
-    "department_name" TEXT NOT NULL UNIQUE,
+    "department_name" TEXT NOT NULL,
     "location" TEXT,
-    PRIMARY KEY ("department_id")
+    PRIMARY KEY ("department_id"),
+    UNIQUE ("department_name", "location")
 );
-
 -- Track --
 CREATE TABLE "track" (
     "track_id" SERIAL,
