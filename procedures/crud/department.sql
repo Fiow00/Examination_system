@@ -18,10 +18,14 @@ BEGIN
      IF p_department_name IS NULL OR TRIM(p_department_name) = '' THEN
         RAISE EXCEPTION 'Department name cannot be empty';
     END IF;
+	IF p_location IS NULL OR TRIM(p_location) = '' THEN
+        RAISE EXCEPTION 'Location cannot be empty';
+    END IF;
 
      IF EXISTS (
         SELECT 1 FROM "department"
         WHERE LOWER("department_name") = LOWER(p_department_name)
+		AND LOWER("location") = LOWER(p_location)
     ) THEN
         RAISE EXCEPTION 'Department already exists';
     END IF;
@@ -54,10 +58,15 @@ BEGIN
     IF p_department_name IS NULL OR TRIM(p_department_name) = '' THEN
         RAISE EXCEPTION 'Department name cannot be empty';
     END IF;
+	
+	IF p_location IS NULL OR TRIM(p_location) = '' THEN
+    RAISE EXCEPTION 'Location cannot be empty';
+    END IF;
  
     IF EXISTS (
         SELECT 1 FROM "department"
         WHERE LOWER("department_name") = LOWER(p_department_name)
+		  AND LOWER("location") = LOWER(p_location)
         AND "department_id" <> p_department_id
     ) THEN
         RAISE EXCEPTION 'Another department with same name exists';
