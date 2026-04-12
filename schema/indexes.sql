@@ -48,7 +48,6 @@ CREATE INDEX "student_exam_index" ON "student_exam"("student_id", "exam_id");
 CREATE INDEX "exam_question_index" ON "exam_question"("exam_id", "question_id");
 
 -- Student_Answer relationship (critical for exam correction and reporting)
-CREATE UNIQUE INDEX "student_answer_index" ON "student_answer"("student_exam_id", "question_id");
 CREATE INDEX "student_answer_question_index" ON "student_answer"("question_id");
 
 -- Model_Answer indexes
@@ -59,5 +58,4 @@ CREATE INDEX "model_answer_choice_index" ON "model_answer"("correct_choice_id");
 
 -- UNIQUE indexes for critical fields (schema constraints + explicit indexes for documentation)
 CREATE UNIQUE INDEX "course_name_index" ON "course"(LOWER("course_name"));
-CREATE UNIQUE INDEX "department_name_index" ON "department"("department_name");
 
