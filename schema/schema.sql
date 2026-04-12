@@ -102,7 +102,7 @@ CREATE TABLE "model_answer" (
     "correct_choice_id" INT,
     PRIMARY KEY ("question_id"),
     FOREIGN KEY ("question_id") REFERENCES "question"("question_id") ON DELETE CASCADE,
-    FOREIGN KEY ("correct_choice_id") REFERENCES "choice"("choice_id") ON DELETE CASCADE
+    FOREIGN KEY ("correct_choice_id") REFERENCES "choice"("choice_id") ON DELETE RESTRICT
 );
 
 -- Exam --
@@ -136,6 +136,10 @@ CREATE TABLE "student_exam" (
     "start_time" TIMESTAMP,
     "end_time" TIMESTAMP,
     "total_grade" INT DEFAULT 0,
+    CHECK (
+        "end_time" IS NULL 
+        OR "end_time" >= "start_time"
+    )
     PRIMARY KEY ("student_exam_id"),
     FOREIGN KEY ("student_id") REFERENCES "student"("student_id") ON DELETE CASCADE,
     FOREIGN KEY ("exam_id") REFERENCES "exam"("exam_id") ON DELETE CASCADE

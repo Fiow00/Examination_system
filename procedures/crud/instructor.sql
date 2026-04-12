@@ -3,7 +3,7 @@
 CREATE OR REPLACE PROCEDURE add_instructor(
     instructor_name TEXT,
     instructor_email TEXT,
-    department_id INT
+    dept_id INT
 )
 LANGUAGE plpgsql
 AS $$
@@ -24,15 +24,15 @@ BEGIN
         RAISE EXCEPTION 'Instructor email already exists';
     END IF;
 
-    IF department_id IS NOT NULL AND NOT EXISTS (
+    IF dept_id IS NOT NULL AND NOT EXISTS (
         SELECT 1 FROM department 
-        WHERE department_id = department_id
+        WHERE department_id = dept_id
     ) THEN
         RAISE EXCEPTION 'Department not found';
     END IF;
 
     INSERT INTO instructor (name, email, department_id)
-    VALUES (instructor_name, instructor_email, department_id);
+    VALUES (instructor_name, instructor_email, dept_id);
 END;
 $$;
 

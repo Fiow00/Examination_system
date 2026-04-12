@@ -5,10 +5,10 @@
  *          Each exam instance contains unique questions with no duplicates.
  * 
  * Parameters:
- *   @course_id INT - Target course ID (must exist)
- *   @exam_name TEXT - Exam name (required, unique per course, supports Arabic and English)
- *   @num_mcq INT - Number of MCQ questions to include (must be >= 0 and available)
- *   @num_tf INT - Number of True/False questions to include (must be >= 0 and available)
+ *   @p_course_id INT - Target course ID (must exist)
+ *   @p_exam_name TEXT - Exam name (required, unique per course, supports Arabic and English)
+ *   @p_num_mcq INT - Number of MCQ questions to include (must be >= 0 and available)
+ *   @p_num_tf INT - Number of True/False questions to include (must be >= 0 and available)
  * 
  * Returns: None (raises NOTICE on success, creates exam and exam_question records)
  * 
@@ -32,32 +32,31 @@
  * Supports: Arabic and English text via ar_AR.utf8 collation
  */
 CREATE OR REPLACE PROCEDURE "generate_exam"(
-    course_id INT,
-    exam_name TEXT,
-    num_mcq INT,
-    num_tf INT
+    p_course_id INT,
+    p_exam_name TEXT,
+    p_num_mcq INT,
+    p_num_tf INT
 )
 LANGUAGE "plpgsql"
 AS $$
 DECLARE
     total_questions INT;
-    exam_id INT;
+    v_exam_id INT;
 BEGIN
-
-    total_questions := num_mcq + num_tf;
+    total_questions := p_num_mcq + p_num_tf;
 
     IF NOT EXISTS (
         SELECT 1 FROM "course"
-        WHERE "course"."course_id" = course_id
+        WHERE "course_id" = p_course_id
     ) THEN
-        RAISE EXCEPTION 'Course with ID % does not exist', course_id;
+        RAISE EXCEPTION 'Course with ID % does not exist', p_course_id;
     END IF;
 
-    IF TRIM(exam_name) = '' THEN
+    IF p_exam_name IS NULL OR TRIM(p_exam_name) = '' THEN
         RAISE EXCEPTION 'Exam name cannot be empty';
     END IF;
 
-    IF num_mcq < 0 OR num_tf < 0 THEN
+    IF p_num_mcq < 0 OR p_num_tf < 0 THEN
         RAISE EXCEPTION 'Number of questions cannot be negative';
     END IF;
 
@@ -67,71 +66,71 @@ BEGIN
 
     IF EXISTS (
         SELECT 1 FROM "exam"
-        WHERE LOWER("name") COLLATE "ar_AR.utf8" = LOWER(TRIM(exam_name)) COLLATE "ar_AR.utf8"
-        AND "exam"."course_id" = course_id
+        WHERE LOWER("name") = LOWER(TRIM(p_exam_name))
+        AND "course_id" = p_course_id
     ) THEN
-        RAISE EXCEPTION 'Exam "%" already exists for this course', exam_name;
+        RAISE EXCEPTION 'Exam "%" already exists for this course', p_exam_name;
     END IF;
 
     IF (
         SELECT COUNT(*)
         FROM "question"
-        JOIN "model_answer" ON "question"."question_id" = "model_answer"."question_id"
-        WHERE "question"."course_id" = course_id
-        AND "question"."type" = 'MCQ'
-    ) < num_mcq THEN
+        JOIN "model_answer" USING ("question_id")
+        WHERE "course_id" = p_course_id
+        AND "type" = 'MCQ'
+    ) < p_num_mcq THEN
         RAISE EXCEPTION 'Not enough MCQ questions for this course';
     END IF;
 
     IF (
         SELECT COUNT(*)
         FROM "question"
-        JOIN "model_answer" ON "question"."question_id" = "model_answer"."question_id"
-        WHERE "question"."course_id" = course_id
-        AND "question"."type" = 'TF'
-    ) < num_tf THEN
+        JOIN "model_answer" USING ("question_id")
+        WHERE "course_id" = p_course_id
+        AND "type" = 'TF'
+    ) < p_num_tf THEN
         RAISE EXCEPTION 'Not enough TF questions for this course';
     END IF;
 
     INSERT INTO "exam" ("name", "course_id", "total_questions")
-    VALUES (TRIM(exam_name), course_id, total_questions)
-    RETURNING "exam_id" INTO exam_id;
+    VALUES (TRIM(p_exam_name), p_course_id, total_questions)
+    RETURNING "exam_id" INTO v_exam_id;
 
     INSERT INTO "exam_question" ("exam_id", "question_id", "order_number")
     SELECT 
-        exam_id,
-        "question"."question_id",
+        v_exam_id,
+        q."question_id",
         ROW_NUMBER() OVER ()
     FROM (
-        SELECT "question"."question_id"
+        SELECT "question_id"
         FROM "question"
-        JOIN "model_answer" ON "question"."question_id" = "model_answer"."question_id"
-        WHERE "question"."course_id" = course_id
-        AND "question"."type" = 'MCQ'
+        JOIN "model_answer" USING ("question_id")
+        WHERE "course_id" = p_course_id
+        AND "type" = 'MCQ'
         ORDER BY RANDOM()
-        LIMIT num_mcq
-    ) AS mcq_questions;
+        LIMIT p_num_mcq
+    ) q;
 
     INSERT INTO "exam_question" ("exam_id", "question_id", "order_number")
     SELECT 
-        exam_id,
-        "question"."question_id",
-        ROW_NUMBER() OVER () + num_mcq
+        v_exam_id,
+        q."question_id",
+        ROW_NUMBER() OVER () + p_num_mcq
     FROM (
-        SELECT "question"."question_id"
+        SELECT "question_id"
         FROM "question"
-        JOIN "model_answer" ON "question"."question_id" = "model_answer"."question_id"
-        WHERE "question"."course_id" = course_id
-        AND "question"."type" = 'TF'
+        JOIN "model_answer" USING ("question_id")
+        WHERE "course_id" = p_course_id
+        AND "type" = 'TF'
         ORDER BY RANDOM()
-        LIMIT num_tf
-    ) AS tf_questions;
+        LIMIT p_num_tf
+    ) q;
 
-    RAISE NOTICE 'Exam "%" created successfully with % questions', exam_name, total_questions;
+    RAISE NOTICE 'Exam "%" created successfully with % questions', p_exam_name, total_questions;
 
 EXCEPTION
     WHEN unique_violation THEN
-        RAISE EXCEPTION 'Exam "%" already exists for this course', exam_name;
+        RAISE EXCEPTION 'Exam "%" already exists for this course', p_exam_name;
 
     WHEN foreign_key_violation THEN
         RAISE EXCEPTION 'Invalid course reference';

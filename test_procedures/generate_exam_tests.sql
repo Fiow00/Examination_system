@@ -1,0 +1,11 @@
+CALL "generate_exam"(1, 'Midterm Exam', 8, 3);
+CALL "generate_exam"(1, 'Final Exam', 10, 5);
+CALL "generate_exam"(1, 'Quiz 1', 5, 2);
+CALL "generate_exam"(1, 'Quiz 2', 6, 3);
+CALL "generate_exam"(1, 'Practice Test', 7, 4);
+CALL "generate_exam"(2, 'Midterm Exam', 8, 3);
+CALL "generate_exam"(2, 'Final Exam', 10, 4);
+CALL "generate_exam"(3, 'Midterm Exam', 8, 3);
+CALL "generate_exam"(3, 'Final Exam', 10, 3);
+CALL "generate_exam"(4, 'Quiz', 8, 2);
+CALL "generate_exam"(5, 'Assessment', 9, 3);
